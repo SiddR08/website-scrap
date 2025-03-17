@@ -48,35 +48,43 @@
 
     <div class="container">
         <h2>Amazon Product Scraper</h2>
-        <input type="text" id="amazonUrl" placeholder="Enter Amazon Product URL">
-        <button onclick="fetchProduct()">Get Product Info</button>
-        
-        <div id="result" class="product"></div>
+  <input type="text" id="amazonAsin" placeholder="Enter Amazon ASIN">
+<button onclick="fetchProduct()">Get Product Info</button>
+<div id="result"></div>
+
     </div>
 
     <script>
-        async function fetchProduct() {
-            const url = document.getElementById('amazonUrl').value;
-            const resultDiv = document.getElementById('result');
-            resultDiv.innerHTML = "Fetching product details...";
+    async function fetchProduct() {
+    const asin = document.getElementById("amazonAsin").value;
+    const resultDiv = document.getElementById("result");
+    resultDiv.innerHTML = "Fetching product details...";
 
-            try {
-                const response = await fetch(`https://amazon-scraper-wo4f.onrender.com?url=${encodeURIComponent(url)}`);
-                const data = await response.json();
+    try {
+        const response = await fetch("https://amazon-scraper-wo4f.onrender.com/scrape", {
+            method: "POST",  // Use POST instead of GET
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({ asins: [asin] }) // Send data in body
+        });
 
-                if (response.ok) {
-                    resultDiv.innerHTML = `
-                        <h3>${data.title}</h3>
-                        <p><strong>Price:</strong> ${data.price}</p>
-                        <img src="${data.image}" alt="${data.title}">
-                    `;
-                } else {
-                    resultDiv.innerHTML = `<p style="color: red;">Error: ${data.message}</p>`;
-                }
-            } catch (error) {
-                resultDiv.innerHTML = `<p style="color: red;">Network error. Please try again.</p>`;
-            }
+        const data = await response.json();
+
+        if (response.ok) {
+            resultDiv.innerHTML = `
+                <h3>ASIN: ${asin}</h3>
+                <p><strong>Seller:</strong> ${data[0].seller}</p>
+                <p><strong>Price:</strong> ${data[0].price}</p>
+            `;
+        } else {
+            resultDiv.innerHTML = `<p style="color: red;">Error: ${data.error || "Failed to fetch data"}</p>`;
         }
+    } catch (error) {
+        resultDiv.innerHTML = `<p style="color: red;">Network error. Please try again.</p>`;
+    }
+}
+
     </script>
 
 </body>

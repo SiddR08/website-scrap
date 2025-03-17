@@ -12,7 +12,7 @@ export default function AmazonScraper() {
     setData(null);
 
     try {
-      const response = await fetch(`https://your-render-url.com/scrape?url=${encodeURIComponent(url)}`);
+      const response = await fetch(`https://amazon-scraper-wo4f.onrender.com?url=${encodeURIComponent(url)}`);
       const result = await response.json();
 
       if (response.ok) {
